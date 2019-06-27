@@ -18,11 +18,8 @@
     <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="12761.cpp">
+    <ClCompile Include="1922.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
