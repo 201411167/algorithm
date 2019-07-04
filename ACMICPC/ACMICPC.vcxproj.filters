@@ -13,22 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\dynamic_programming">
-      <UniqueIdentifier>{945a68e8-001f-41d9-9d5f-8002e8bc645d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\bfs&amp;graph">
-      <UniqueIdentifier>{53e699e4-9b83-4cb3-978a-c981305c34e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\greedy_algorithm">
-      <UniqueIdentifier>{b8565636-ecf0-402b-809b-b9819ed2756d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="11399.cpp">
-      <Filter>소스 파일\greedy_algorithm</Filter>
+    <ClCompile Include="greedy_algorithm\11399.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
