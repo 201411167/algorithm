@@ -1,6 +1,3 @@
-﻿  source.cpp
-C:\Users\rlarl\source\repos\algorithm\ACMICPC\source.cpp(145,13): warning C4244:  '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\rlarl\source\repos\algorithm\ACMICPC\source.cpp(175,19): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\rlarl\source\repos\algorithm\ACMICPC\source.cpp(176,20): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\rlarl\source\repos\algorithm\ACMICPC\source.cpp(177,20): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  2151.cpp
+C:\Users\rlarl\source\repos\algorithm\ACMICPC\graph_algorithm\2151.cpp(51,13): warning C4244:  '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   ACMICPC.vcxproj -> C:\Users\rlarl\source\repos\algorithm\x64\Debug\ACMICPC.exe

@@ -132,10 +132,7 @@
     <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source.h" />
+    <ClCompile Include="graph_algorithm\2151.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

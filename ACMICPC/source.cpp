@@ -3,199 +3,120 @@
 #include <algorithm>
 using namespace std;
 
-int n, m;
-char map[105][105];
+#define pii pair<int,int>
+#define piii pair<int, pair<int,int>>
+int n;
+int map[101][101];
 int dx[] = { -1,0,1,0 };
 int dy[] = { 0,-1,0,1 };
-int visit[105][105];
-int visitA[105][105];
-int visitB[105][105];
 
-typedef struct node {
-	int x, y;
-	int dist;
-}NODE;
-NODE A, B;
-
-bool operator < (NODE a, NODE b) {
-	return a.dist > b.dist;
+void input() {
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cin >> map[i][j];
+		}
+	}
 }
 
 bool inside(int x, int y) {
-	if (x < 0 || y < 0 || x >= n + 2 || y >= m + 2)return false;
+	if (x < 0 || y < 0 || x >= n || y >= n)return false;
 	return true;
 }
 
-void show() {
-	for (int i = 0; i < n + 2; i++) {
-		for (int j = 0; j < m + 2; j++) {
-			cout << map[i][j] << "";
+void labeling() {
+	bool visit[101][101] = { false, };
+	int numbering = 0;
+	queue<pii> q;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (map[i][j] == 1 && visit[i][j] == false) {
+				numbering++;
+				visit[i][j] = true;
+				q.push({ i,j });
+				while (!q.empty()) {
+					int cx = q.front().first;
+					int cy = q.front().second;
+					q.pop();
+					map[cx][cy] = numbering;
+					for (int i = 0; i < 4; i++) {
+						int nx = cx + dx[i];
+						int ny = cy + dy[i];
+						if (!inside(nx, ny))continue;
+						if (visit[nx][ny] == false && map[nx][ny] == 1) {
+							visit[nx][ny] = true;
+							q.push({ nx,ny });
+						}
+					}
+				}
+			}
 		}
-		cout << "\n";
 	}
-	cout << "\n";
 }
 
-void bfs() {
-	priority_queue<NODE> q;
-	NODE start; start.x = 0; start.y = 0; start.dist = 0;
-	visit[0][0] = 0;
-	q.push(start);
+bool near_beach(int x, int y) {
+	bool ret = false;
+	for (int i = 0; i < 4; i++) {
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+		if (!inside(nx, ny))continue;
+		if (map[nx][ny] == 0) {
+			ret = true;
+		}
+	}
+	return ret;
+}
+
+int shortest_path(int x, int y) {
+	int ret = 1e9;
+	priority_queue<piii> q;
+	bool visit[101][101] = { false, };
+	int from = map[x][y];
+	q.push({ 0,{x,y} });
 	while (!q.empty()) {
-		int cx = q.top().x;
-		int cy = q.top().y;
-		int cd = q.top().dist;
+		int cx = q.top().second.first;
+		int cy = q.top().second.second;
+		int cd = -q.top().first;
 		q.pop();
+		if (map[cx][cy] != 0 && map[cx][cy] != from) {
+			ret = min(ret, cd - 1);
+			return ret;
+		}
 		for (int i = 0; i < 4; i++) {
 			int nx = cx + dx[i];
 			int ny = cy + dy[i];
 			if (!inside(nx, ny))continue;
-			if (map[nx][ny] == '*')continue;
-			if (map[nx][ny] == '.' || map[nx][ny] == 'A' || map[nx][ny] == 'B') {
-				if (visit[nx][ny] > visit[cx][cy]) {
-					visit[nx][ny] = visit[cx][cy];
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
+			if (map[nx][ny] == from)continue;
+			if (map[nx][ny] == 0 && visit[nx][ny] == 0) {
+				visit[nx][ny] = 1;
+				q.push({ -cd - 1, {nx,ny} });
 			}
-			if (map[nx][ny] == '#') {
-				if (visit[nx][ny] > visit[cx][cy] + 1) {
-					visit[nx][ny] = visit[cx][cy] + 1;
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
+			if (map[nx][ny] != 0 && visit[nx][ny] == 0) {
+				visit[nx][ny] = 1;
+				q.push({ -cd - 1, {nx,ny} });
 			}
 		}
 	}
 }
 
-void bfsA() {
-	priority_queue<NODE>q;
-	A.dist = 0;
-	visitA[A.x][A.y] = 0;
-	q.push(A);
-	while (!q.empty()) {
-		int cx = q.top().x;
-		int cy = q.top().y;
-		int cd = q.top().dist;
-		q.pop();
-		for (int i = 0; i < 4; i++) {
-			int nx = cx + dx[i];
-			int ny = cy + dy[i];
-			if (!inside(nx, ny))continue;
-			if (map[nx][ny] == '*')continue;
-			if (map[nx][ny] == '.' || map[nx][ny] == 'A' || map[nx][ny] == 'B') {
-				if (visitA[nx][ny] > visitA[cx][cy]) {
-					visitA[nx][ny] = visitA[cx][cy];
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
-			}
-			if (map[nx][ny] == '#') {
-				if (visitA[nx][ny] > visitA[cx][cy] + 1) {
-					visitA[nx][ny] = visitA[cx][cy] + 1;
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
+int make_bridge() {
+	int ret = 1e9;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (map[i][j] != 0 && near_beach(i,j)) {
+				ret = min(ret, shortest_path(i, j));
 			}
 		}
 	}
-}
-
-void bfsB() {
-	priority_queue<NODE>q;
-	B.dist = 0;
-	visitB[B.x][B.y] = 0;
-	q.push(B);
-	while (!q.empty()) {
-		int cx = q.top().x;
-		int cy = q.top().y;
-		int cd = q.top().dist;
-		q.pop();
-		for (int i = 0; i < 4; i++) {
-			int nx = cx + dx[i];
-			int ny = cy + dy[i];
-			if (!inside(nx, ny))continue;
-			if (map[nx][ny] == '*')continue;
-			if (map[nx][ny] == '.' || map[nx][ny] == 'A' || map[nx][ny] == 'B') {
-				if (visitB[nx][ny] > visitB[cx][cy]) {
-					visitB[nx][ny] = visitB[cx][cy];
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
-			}
-			if (map[nx][ny] == '#') {
-				if (visitB[nx][ny] > visitB[cx][cy] + 1) {
-					visitB[nx][ny] = visitB[cx][cy] + 1;
-					NODE nxt;
-					nxt.x = nx; nxt.y = ny; nxt.dist = cd + 1;
-					q.push(nxt);
-				}
-			}
-		}
-	}
-}
-
-void showAnswer() {
-	int answer = 1e9;
-	for (int i = 0; i < n + 2; i++) {
-		for (int j = 0; j < m + 2; j++) {
-			int t = visit[i][j];
-			int ta = visitA[i][j];
-			int tb = visitB[i][j];
-			if (t == 1e9 || ta == 1e9 || tb == 1e9)continue;
-			if (map[i][j] == '#') {
-				answer = min(answer, t + ta + tb - 2);
-			}
-			else {
-				answer = min(answer, t + ta + tb);
-			}
-		}
-	}
-	cout << answer << "\n";
+	return ret;
 }
 
 int main() {
 	std::cin.tie(0);
 	std::ios::sync_with_stdio(0);
 	freopen("Text.txt", "r", stdin);
-	
-	int testCase; cin >> testCase;
-	while (testCase--) {
-		cin >> n >> m;
-		int prisoner = 0;
-		for (int i = 0; i < n + 2; i++) {
-			for (int j = 0; j < m + 2; j++) {
-				map[i][j] = '.';
-				visit[i][j] = 1e9;
-				visitA[i][j] = 1e9;
-				visitB[i][j] = 1e9;
-			}
-		}
-		for (int i = 1; i < n + 1; i++) {
-			for (int j = 1; j < m + 1; j++) {
-				cin >> map[i][j];
-				if (map[i][j] == '$') {
-					map[i][j] = 'A' + prisoner++;
-				}
-				if (map[i][j] == 'A') {
-					A.x = i;
-					A.y = j;
-				}
-				if (map[i][j] == 'B') {
-					B.x = i;
-					B.y = j;
-				}
-			}
-		}
-		bfs();
-		bfsA();
-		bfsB();
-		showAnswer();
-	}
+
+	input();
+	labeling();
+	cout << make_bridge();
 }
