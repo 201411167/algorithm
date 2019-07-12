@@ -4,46 +4,36 @@
 using namespace std;
 
 #define pii pair<int,int>
-#define piii pair<int, pair<int,int>>
-int n;
-int map[101][101];
-int dx[] = { -1,0,1,0 };
-int dy[] = { 0,-1,0,1 };
-
-void input() {
-	cin >> n;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cin >> map[i][j];
-		}
-	}
-}
+int n, m;
+int map[51][51];
+int dir[4][2] = { {0,-1},{-1,0},{0,1},{1,0} };
 
 bool inside(int x, int y) {
-	if (x < 0 || y < 0 || x >= n || y >= n)return false;
-	return true;
+	if (x < 0 || y < 0 || x >= n || y >= m) { return false; }
+	else { return true; }
 }
 
-void labeling() {
-	bool visit[101][101] = { false, };
-	int numbering = 0;
-	queue<pii> q;
+int number_of_room() {
+	int ret = 0;
+	bool visit[51][51] = { false, };
+	queue<pii>q;
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (map[i][j] == 1 && visit[i][j] == false) {
-				numbering++;
+		for (int j = 0; j < m; j++) {
+			if (visit[i][j] == false) {
+				ret++;
 				visit[i][j] = true;
 				q.push({ i,j });
 				while (!q.empty()) {
 					int cx = q.front().first;
 					int cy = q.front().second;
 					q.pop();
-					map[cx][cy] = numbering;
-					for (int i = 0; i < 4; i++) {
-						int nx = cx + dx[i];
-						int ny = cy + dy[i];
+					int wall = map[cx][cy];
+					for (int d = 0; d < 4; d++) {
+						int nx = cx + dir[d][0];
+						int ny = cy + dir[d][1];
 						if (!inside(nx, ny))continue;
-						if (visit[nx][ny] == false && map[nx][ny] == 1) {
+						if (wall & (1 << d))continue;
+						if (!visit[nx][ny]) {
 							visit[nx][ny] = true;
 							q.push({ nx,ny });
 						}
@@ -52,62 +42,60 @@ void labeling() {
 			}
 		}
 	}
+	return ret;
 }
 
-bool near_beach(int x, int y) {
-	bool ret = false;
-	for (int i = 0; i < 4; i++) {
-		int nx = x + dx[i];
-		int ny = y + dy[i];
-		if (!inside(nx, ny))continue;
-		if (map[nx][ny] == 0) {
-			ret = true;
+int max_size() {
+	int ret = 0;
+	queue<pii>q;
+	bool visit[51][51] = { false, };
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (!visit[i][j]) {
+				visit[i][j] = true;
+				q.push({ i,j });
+				int size = 0;
+				while (!q.empty()) {
+					int cx = q.front().first;
+					int cy = q.front().second;
+					q.pop();
+					size++;
+					int wall = map[cx][cy];
+					for (int d = 0; d < 4; d++) {
+						int nx = cx + dir[d][0];
+						int ny = cy + dir[d][1];
+						if (!inside(nx, ny))continue;
+						if (wall & (1 << d))continue;
+						if (!visit[nx][ny]) {
+							visit[nx][ny] = true;
+							q.push({ nx,ny });
+						}
+					}
+				}
+				ret = max(ret, size);
+			}
 		}
 	}
 	return ret;
 }
 
-int shortest_path(int x, int y) {
-	int ret = 1e9;
-	priority_queue<piii> q;
-	bool visit[101][101] = { false, };
-	int from = map[x][y];
-	q.push({ 0,{x,y} });
-	while (!q.empty()) {
-		int cx = q.top().second.first;
-		int cy = q.top().second.second;
-		int cd = -q.top().first;
-		q.pop();
-		if (map[cx][cy] != 0 && map[cx][cy] != from) {
-			ret = min(ret, cd - 1);
-			return ret;
-		}
-		for (int i = 0; i < 4; i++) {
-			int nx = cx + dx[i];
-			int ny = cy + dy[i];
-			if (!inside(nx, ny))continue;
-			if (map[nx][ny] == from)continue;
-			if (map[nx][ny] == 0 && visit[nx][ny] == 0) {
-				visit[nx][ny] = 1;
-				q.push({ -cd - 1, {nx,ny} });
-			}
-			if (map[nx][ny] != 0 && visit[nx][ny] == 0) {
-				visit[nx][ny] = 1;
-				q.push({ -cd - 1, {nx,ny} });
-			}
-		}
-	}
-}
-
-int make_bridge() {
-	int ret = 1e9;
+int max_size_with_destroy() {
+	int ret = 0;
+	
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (map[i][j] != 0 && near_beach(i,j)) {
-				ret = min(ret, shortest_path(i, j));
+		for (int j = 0; j < m; j++) {
+			int origin_wall = map[i][j];
+			for (int k = 0; k < 4; k++) {
+				if (origin_wall & (1 << k)) {
+					map[i][j] &= ~(1 << k);
+					int size = max_size();
+					ret = max(ret, size);
+					map[i][j] = origin_wall;
+				}
 			}
 		}
 	}
+
 	return ret;
 }
 
@@ -116,7 +104,12 @@ int main() {
 	std::ios::sync_with_stdio(0);
 	freopen("Text.txt", "r", stdin);
 
-	input();
-	labeling();
-	cout << make_bridge();
+	cin >> m >> n;
+	for (int i = 0; i < n; i++) { {for (int j = 0; j < m; j++) { cin >> map[i][j]; }} }
+
+	cout << number_of_room() << "\n";
+	cout << max_size() << "\n";
+	cout << max_size_with_destroy() << "\n";
+
+	return 0;
 }
