@@ -1,84 +1,123 @@
 #include <iostream>
-#include <queue>
-#include <vector>
 #include <algorithm>
+#include <queue>
+#include <string>
 using namespace std;
 
 #define pii pair<int,int>
-#define piii pair<int, pair<int,int>>
-int n;
-char map[51][51];
-int height[51][51];
-int sx, sy;
-int k;
-vector<int>heights;
-int visit[51][51];
-int dir[8][2] = { {-1,0},{-1,-1},{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1} };
-
-void input() {
-	cin >> n;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cin >> map[i][j];
-			if (map[i][j] == 'P') {
-				sx = i; sy = j;
-			}
-			if (map[i][j] == 'K') {
-				k++;
-			}
-		}
-	}
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cin >> height[i][j];
-			heights.push_back({ height[i][j]});
-		}
-	}
-}
+int n, m;
+char map[103][103];
+int keys[26];
+bool visit[103][103];
 
 bool inside(int x, int y) {
-	if (x < 0 || y < 0 || x >= n || y >= n)return false;
+	if (x < 0 || y < 0 || x >= n + 2 || y >= m + 2) { return false; }
 	return true;
 }
 
-int dfs(int x, int y, int mn, int mx) {
-	if (visit[x][y] || height[x][y] < mn || height[x][y] > mx || !inside(x, y)) {
-		return 0;
+void init_visit() {
+	for(int i=0;i<103;i++){
+		for (int j = 0; j < 103; j++) {
+			visit[i][j] = false;
+		}
 	}
-	visit[x][y] = 1;
+}
+
+void init_keys() {
+	for (int i = 0; i < 26; i++) {
+		keys[i] = 0;
+	}
+}
+
+int bfs() {
+	int dir[4][2] = { {-1,0},{0,-1},{1,0},{0,1} };
 	int ret = 0;
-	if (map[x][y] == 'K') {
-		ret++;
-	}
-	for (int i = 0; i < 8; i++) {
-		int nx = x + dir[i][0];
-		int ny = y + dir[i][1];
-		ret += dfs(nx, ny, mn, mx);
+	queue<pii>q;
+	q.push({ 0,0 });
+	visit[0][0] = true;
+	while (!q.empty()) {
+		int cx = q.front().first;
+		int cy = q.front().second;
+		q.pop();
+		for (int d = 0; d < 4; d++) {
+			int nx = cx + dir[d][0];
+			int ny = cy + dir[d][1];
+			if (!inside(nx, ny))continue;
+			if (map[nx][ny] == '*')continue;
+			if (map[nx][ny] == '.') {
+				if (!visit[nx][ny]) {
+					visit[nx][ny] = true;
+					q.push({ nx,ny });
+				}
+			}
+			if ('a' <= map[nx][ny] && map[nx][ny] <= 'z') {
+				if (!visit[nx][ny]) {
+					if (keys[map[nx][ny] - 'a'] == 0) {
+						keys[map[nx][ny] - 'a'] = 1;
+						map[nx][ny] = '.';
+						init_visit();
+					}
+					visit[nx][ny] = true;
+					q.push({ nx,ny });
+				}
+			}
+			if ('A' <= map[nx][ny] && map[nx][ny] <= 'Z') {
+				if (!visit[nx][ny]) {
+					if (keys[map[nx][ny] - 'A'] == 1) {
+						map[nx][ny] = '.';
+						visit[nx][ny] = true;
+						q.push({ nx,ny });
+					}
+				}
+			}
+			if (map[nx][ny] == '$') {
+				if (!visit[nx][ny]) {
+					visit[nx][ny] = true;
+					map[nx][ny] = '.';
+					ret++;
+					q.push({ nx,ny });
+				}
+			}
+		}
 	}
 	return ret;
 }
 
+void show() {
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= m; j++) {
+			cout << map[i][j];
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+}
+
 int main() {
+	freopen("Text.txt", "r", stdin);
 	std::cin.tie(0);
 	std::ios::sync_with_stdio(0);
-	freopen("Text.txt", "r", stdin);
-	input();
-	sort(heights.begin(), heights.end());
-	heights.erase(unique(heights.begin(), heights.end()), heights.end());
-
-	int i = 0;
-	int j = 0;
-	int ans = 1e9;
-	for (i = 0; i < heights.size(); i++) {
-		while (1) {
-			memset(visit, 0, sizeof(visit));
-			if (dfs(sx, sy, heights[j], heights[i]) != k) {
-				break;
+	int testCase; cin >> testCase;
+	while (testCase--) {
+		cin >> n >> m;
+		init_visit();
+		init_keys();
+		for (int i = 0; i < n + 2; i++) {
+			for (int j = 0; j < m + 2; j++) {
+				map[i][j] = '.';
 			}
-			ans = min(ans, heights[i] - heights[j]);
-			j++;
 		}
+		for (int i = 1; i < n + 1; i++) {
+			for (int j = 1; j < m + 1; j++) {
+				cin >> map[i][j];
+			}
+		}
+		string key; cin >> key;
+		if(key.compare("0") != 0) {
+			for (int i = 0; i < key.length(); i++) {
+				keys[key[i] - 'a'] = 1;
+			}
+		}
+		cout << bfs() << "\n";
 	}
-	cout << ans;
-	return 0;
 }
