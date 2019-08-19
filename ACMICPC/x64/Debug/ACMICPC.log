@@ -1,3 +1,3 @@
-﻿  14395.cpp
-  C:\Users\rlarl\source\repos\algorithm\ACMICPC\graph_algorithm\14395.cpp(32) : warning C4715: 'Calculate': 모든 제어 경로에서 값을 반환하지는 않습니다.
+﻿  15653.cpp
+C:\Users\rlarl\source\repos\algorithm\ACMICPC\graph_algorithm\15653.cpp(40,25): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   ACMICPC.vcxproj -> C:\Users\rlarl\source\repos\algorithm\x64\Debug\ACMICPC.exe
