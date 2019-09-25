@@ -147,6 +147,6 @@ int main() {
 
 	input();
 	cout << bfs();
-
+	
 	return 0;
 }
