@@ -17,9 +17,4 @@
   <ItemGroup>
     <Text Include="Text.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="swexpertacademy\핀볼 게임.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>

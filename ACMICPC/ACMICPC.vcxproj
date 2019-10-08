@@ -132,9 +132,6 @@
   <ItemGroup>
     <Text Include="Text.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="swexpertacademy\핀볼 게임.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
