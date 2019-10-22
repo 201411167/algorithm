@@ -1,2 +1,3 @@
-﻿  16954.cpp
+﻿  16929.cpp
+C:\Users\rlarl\CODE\visual_studio\projects\algorithm\ACMICPC\graph_algorithm\16929.cpp(15,2): warning C4094:  태그 없는 'struct'에서 기호를 선언하지 않았습니다.
   ACMICPC.vcxproj -> C:\Users\rlarl\CODE\visual_studio\projects\algorithm\x64\Debug\ACMICPC.exe
