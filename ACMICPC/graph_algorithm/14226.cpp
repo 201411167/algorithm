@@ -9,7 +9,7 @@ struct EMOTICON {
 	int clipboard; //클립보드
 };
 queue<EMOTICON>q;
-int dist[1001][1001];
+int dist[2002][2002];
 
 void init() {
 	for (int i = 0; i < 1001; i++) {
