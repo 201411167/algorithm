@@ -1,4 +1,4 @@
-﻿  1525.cpp
-C:\Users\rlarl\CODE\visual_studio\projects\algorithm\ACMICPC\graph_algorithm\1525.cpp(31,40): warning C4244:  '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\rlarl\CODE\visual_studio\projects\algorithm\ACMICPC\graph_algorithm\1525.cpp(44,32): warning C4267:  '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  14226.cpp
+C:\Users\rlarl\CODE\visual_studio\projects\algorithm\ACMICPC\graph_algorithm\14226.cpp(17,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\rlarl\CODE\visual_studio\projects\algorithm\ACMICPC\graph_algorithm\14226.cpp(34,15): warning C4244:  '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   ACMICPC.vcxproj -> C:\Users\rlarl\CODE\visual_studio\projects\algorithm\x64\Debug\ACMICPC.exe
