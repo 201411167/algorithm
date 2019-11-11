@@ -1,107 +1,59 @@
 #include <iostream>
 #include <queue>
+#include <vector>
 #include <algorithm>
 using namespace std;
 
-int n, m;
-char map[21][21];
-int sx, sy;
-int dir[4][2] = { {-1,0},{0,-1},{1,0},{0,1} };
-int visit[1 << 11][21][21];
-int total;
-
-struct NODE {
-	int x, y;
-	int dirty;
+int n;
+struct INFO {
+	int day; //날짜
+	int money; //수익 - 비용
+	int number; //주식 개수
 };
-
-void input() {
-	cin >> m >> n;
-	if (m == 0 && n == 0) {
-		return;
-	}
-	total = 0;
-	int numbering = 0;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			cin >> map[i][j];
-			if (map[i][j] == 'o') { sx = i; sy = j; }
-			if (map[i][j] == '*') {
-				map[i][j] = 'A' + numbering++;
-				total |= (1 << map[i][j] - 'A');
-			}
-		}
-	}
-}
-
-void init() {
-	for (int i = 0; i < (1 << 11); i++) {
-		for (int j = 0; j < 21; j++) {
-			for (int k = 0; k < 21; k++) {
-				visit[i][j][k] = 1e9;
-			}
-		}
-	}
-	visit[0][sx][sy] = 0;
-}
-
-bool inside(int x, int y) {
-	if (x < 0 || y < 0 || x >= n || y >= m)return false;
-	return true;
-}
-
-int bfs() {
-	int ret = 1e9;
-	queue<NODE>q;
-	q.push({ sx,sy,0 });
-	init();
-	while (!q.empty()) {
-		int cx = q.front().x;
-		int cy = q.front().y;
-		int cd = q.front().dirty;
-		q.pop();
-		if (cd == total) {
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < m; j++) {
-					ret = min(ret, visit[total][i][j]);
-				}
-			}
-		}
-		for (int d = 0; d < 4; d++) {
-			int nx = cx + dir[d][0];
-			int ny = cy + dir[d][1];
-			if (!inside(nx, ny))continue;
-			if (map[nx][ny] == 'x')continue;
-			if (map[nx][ny] == 'o' || map[nx][ny] == '.') {
-				if (visit[cd][nx][ny] > visit[cd][cx][cy] + 1) {
-					visit[cd][nx][ny] = visit[cd][cx][cy] + 1;
-					q.push({ nx,ny,cd });
-				}
-			}
-			if ('A' <= map[nx][ny] && map[nx][ny] <= 'Z') {
-				int new_dirty = (1 << int(map[nx][ny] - 'A'));
-				int nd = cd | new_dirty;
-				if (visit[nd][nx][ny] > visit[cd][cx][cy] + 1) {
-					visit[nd][nx][ny] = visit[cd][cx][cy] + 1;
-					visit[cd][nx][ny] = visit[cd][cx][cy] + 1;
-					q.push({ nx,ny,nd });
-				}
-			}
-		}
-	}
-	if (ret == 1e9)ret = -1;
-	return ret;
-}
-
-void solve() {
-	while (1) {
-		input();
-		if (n == 0 && m == 0)break;
-		cout << bfs() << "\n";
-	}
-}
+vector<int> future;
 
 int main() {
 	freopen("Text.txt", "r", stdin);
-	solve();
+	cin >> n;
+	future.push_back(0);
+	for (int i = 1; i <= n; i++) {
+		int future_cost; cin >> future_cost;
+		future.push_back(future_cost);
+	}
+	INFO start; 
+	start.day = 0;
+	start.money = 0;
+	start.number = 0;
+	queue<INFO>q;
+	q.push(start);
+
+	while (!q.empty()) {
+		INFO cur = q.front();
+		q.pop();
+		cout << cur.day << ": " << cur.money << "\n";
+		
+		if (cur.day < n) {
+			for (int i = 0; i < 3; i++) {
+				if (i == 0) { //주식 구매
+					INFO nxt;
+					nxt.day = cur.day + 1;
+					nxt.money = cur.money - future[cur.day + 1];
+					nxt.number = cur.number + 1;
+					q.push(nxt);
+				}
+				if (i == 1) { //주식 판매
+					for (int j = 1; j <= cur.number; j++) {
+						INFO nxt;
+						nxt.day = cur.day + 1;
+						nxt.money = cur.money + future[cur.day + 1] * j;
+						nxt.number = cur.number - j;
+						q.push(nxt);
+					}
+				}
+				if (1 == 2) { //아무것도 하지 않음
+					continue;
+				}
+			}
+		}
+	}
 }
