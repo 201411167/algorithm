@@ -4,56 +4,128 @@
 #include <algorithm>
 using namespace std;
 
-int n;
-struct INFO {
-	int day; //날짜
-	int money; //수익 - 비용
-	int number; //주식 개수
-};
-vector<int> future;
+typedef struct { int rx, ry, bx, by; }BEAD; BEAD start;
+int n, m;
+char map[11][11];
+int dijk[11][11][11][11];
+int dir[4][2] = { {-1,0},{0,-1},{1,0},{0,1} };
+int goalx, goaly;
 
-int main() {
-	freopen("Text.txt", "r", stdin);
-	cin >> n;
-	future.push_back(0);
-	for (int i = 1; i <= n; i++) {
-		int future_cost; cin >> future_cost;
-		future.push_back(future_cost);
+void input() {
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 'R') {
+				start.rx = i;
+				start.ry = j;
+			}
+			if (map[i][j] == 'B') {
+				start.bx = i;
+				start.by = j;
+			}
+			if (map[i][j] == 'O') {
+				goalx = i;
+				goaly = j;
+			}
+		}
 	}
-	INFO start; 
-	start.day = 0;
-	start.money = 0;
-	start.number = 0;
-	queue<INFO>q;
-	q.push(start);
+}
 
-	while (!q.empty()) {
-		INFO cur = q.front();
-		q.pop();
-		cout << cur.day << ": " << cur.money << "\n";
-		
-		if (cur.day < n) {
-			for (int i = 0; i < 3; i++) {
-				if (i == 0) { //주식 구매
-					INFO nxt;
-					nxt.day = cur.day + 1;
-					nxt.money = cur.money - future[cur.day + 1];
-					nxt.number = cur.number + 1;
-					q.push(nxt);
-				}
-				if (i == 1) { //주식 판매
-					for (int j = 1; j <= cur.number; j++) {
-						INFO nxt;
-						nxt.day = cur.day + 1;
-						nxt.money = cur.money + future[cur.day + 1] * j;
-						nxt.number = cur.number - j;
-						q.push(nxt);
-					}
-				}
-				if (1 == 2) { //아무것도 하지 않음
-					continue;
+void bfs() {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			for (int k = 0; k < n; k++) {
+				for (int l = 0; l < m; l++) {
+					dijk[i][j][k][l] = 1e9;
 				}
 			}
 		}
 	}
+	dijk[start.rx][start.ry][start.bx][start.by] = 0;
+	queue<BEAD>q;
+	q.push(start);
+	while (!q.empty()) {
+		int crx = q.front().rx;
+		int cry = q.front().ry;
+		int cbx = q.front().bx;
+		int cby = q.front().by;
+		q.pop();
+
+		for (int d = 0; d < 4; d++) {
+			int nrx = crx;
+			int nry = cry;
+			int nbx = cbx;
+			int nby = cby;
+			while (1) {
+				nrx += dir[d][0];
+				nry += dir[d][1];
+				if (map[nrx][nry] == '#') {
+					nrx -= dir[d][0];
+					nry -= dir[d][1];
+					break;
+				}
+				if (map[nrx][nry] == 'O') {
+					break;
+				}
+			}
+			while (1) {
+				nbx += dir[d][0];
+				nby += dir[d][1];
+				if (map[nbx][nby] == '#') {
+					nbx -= dir[d][0];
+					nby -= dir[d][1];
+					break;
+				}
+				if (map[nbx][nby] == 'O') {
+					break;
+				}
+			}
+			if (nrx == nbx && nry == nby) {
+				if (map[nrx][nry] != 'O') {
+					int r_dist = abs(nrx - crx) + abs(nry - cry);
+					int b_dist = abs(nbx - cbx) + abs(nby - cby);
+					if (r_dist > b_dist) {
+						nrx -= dir[d][0];
+						nry -= dir[d][1];
+					}
+					else {
+						nbx -= dir[d][0];
+						nby -= dir[d][1];
+					}
+				}
+			}
+			if (map[nbx][nby] != 'O') {
+				if (dijk[nrx][nry][nbx][nby] > dijk[crx][cry][cbx][cby] + 1) {
+					dijk[nrx][nry][nbx][nby] = dijk[crx][cry][cbx][cby] + 1;
+					q.push({ nrx,nry,nbx,nby });
+				}
+			}
+		}
+	}
+}
+
+void solve() {
+	vector<int>answer;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (dijk[goalx][goaly][i][j] == 1e9)continue;
+			answer.push_back({ dijk[goalx][goaly][i][j] });
+		}
+	}
+	sort(answer.begin(), answer.end());
+	if (answer.empty()) {
+		cout << -1;
+	}
+	else {
+		cout << answer[0];
+	}
+}
+
+int main() {
+	freopen("Text.txt", "r", stdin);
+	input();
+	bfs();
+	solve();
+	return 0;
 }
