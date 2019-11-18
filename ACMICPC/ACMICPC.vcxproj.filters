@@ -18,7 +18,7 @@
     <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="simulation\15661.cpp">
+    <ClCompile Include="graph_algorithm\5213-1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
