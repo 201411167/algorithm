@@ -30,7 +30,7 @@ void draw_line(int y, int x, int d, int g) {
 	}
 }
 
-void input() {
+void solve() {
 	cin >> n;
 	for (int i = 0; i < n; i++) {
 		int x, y, d, g; cin >> y >> x >> d >> g;
@@ -49,6 +49,6 @@ void input() {
 
 int main() {
 	freopen("Text.txt", "r", stdin);
-	input();
+	solve();
 	return 0;
 }
